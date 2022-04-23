@@ -7,6 +7,6 @@
   - Actors
   - AsyncImage
   - CoreLocation
-  - Test's
+  - Test's: ui and unit.
 
 Done with SOLID, low coupling, high cohesion, protocol oriented programming and love.
