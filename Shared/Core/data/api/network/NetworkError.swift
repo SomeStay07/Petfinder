@@ -8,8 +8,10 @@
 import Foundation
 
 public enum NetworkError: LocalizedError {
+    
     case invalidServerResponse
     case invalidURL
+    
     public var errorDescription: String? {
         switch self {
         case .invalidServerResponse:
@@ -18,4 +20,5 @@ public enum NetworkError: LocalizedError {
             return "URL string is malformed."
         }
     }
+    
 }

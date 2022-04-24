@@ -20,12 +20,21 @@ final class LocationManager: NSObject, ObservableObject {
         self.cllLocationManager = CLLocationManager()
         super.init()
         cllLocationManager.delegate = self
+        cllLocationManager.desiredAccuracy = kCLLocationAccuracyReduced
         self.authorizationStatus = cllLocationManager.authorizationStatus
         cllLocationManager.startUpdatingLocation()
     }
     
     func updateAuthorizationStatus() {
         authorizationStatus = cllLocationManager.authorizationStatus
+    }
+    
+    func requestWhenInUseAuthorization() {
+        cllLocationManager.requestWhenInUseAuthorization()
+    }
+    
+    func startUpdatingLocation() {
+        cllLocationManager.startUpdatingLocation()
     }
     
 }

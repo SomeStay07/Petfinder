@@ -6,6 +6,7 @@
 //
 
 enum AuthTokenRequest: RequestProtocol {
+    
     case auth
     
     var path: String {

@@ -9,74 +9,78 @@ import SwiftUI
 
 struct AnimalsNearYouView: View {
     
-    @SectionedFetchRequest<String, AnimalEntity>(
-        sectionIdentifier: \AnimalEntity.animalSpecies,
+    @FetchRequest(
         sortDescriptors: [
-            NSSortDescriptor(keyPath: \AnimalEntity.species, ascending: true),
             NSSortDescriptor(keyPath: \AnimalEntity.timestamp, ascending: true)
         ],
         animation: .default
-    ) private var sectionedAnimals: SectionedFetchResults<String, AnimalEntity>
-    
-    @State var animals: [AnimalEntity] = []
-    @State var isLoading = true
-    
-    private let requestManager = RequestManager()
+    )
+    private var animals: FetchedResults<AnimalEntity>
+    @EnvironmentObject var locationManager: LocationManager
+    @ObservedObject var viewModel: AnimalsNearYouViewModel
     
     var body: some View {
         NavigationView {
-            List {
-              ForEach(sectionedAnimals) { animals in
-                Section(header: Text(animals.id)) {
-                  ForEach(animals) { animal in
-                      AnimalRow(animal: animal)
-                  }
+            if locationManager.locationIsDisabled {
+                RequestLocationView()
+                    .navigationTitle("Animals near you")
+            } else {
+                AnimalListView(animals: animals) {
+                    if !animals.isEmpty && viewModel.hasMoreAnimals {
+                        HStack(alignment: .center) {
+                            LoadingAnimation()
+                                .frame(maxWidth: 125, minHeight: 125)
+                            Text("Loading more animals...")
+                        }
+                        .task {
+                            await viewModel.fetchMoreAnimals(location: locationManager.lastSeenLocation)
+                        }
+                    }
                 }
-              }
-            }
-            .task {
-                await fetchAnimals()
-            }
-            .listStyle(.plain)
-            .navigationTitle("Animals near you!")
-            .overlay {
-                if isLoading {
-                    ProgressView("Finding Animals near you...")
+                .task {
+                    await viewModel.fetchAnimals(location: locationManager.lastSeenLocation)
+                }
+                .listStyle(.plain)
+                .navigationTitle("Animals near you")
+                .overlay {
+                    if viewModel.isLoading && animals.isEmpty {
+                        ProgressView("Finding Animals near you...")
+                    }
                 }
             }
         }.navigationViewStyle(StackNavigationViewStyle())
     }
     
-    func fetchAnimals() async {
-        do {
-            let animalsContainer: AnimalsContainer = try await requestManager.perform(
-                AnimalsRequest.getAnimalsWith(
-                    page: 1,
-                    latitude: nil,
-                    longitude: nil
-                )
-            )
-            
-            for var animal in animalsContainer.animals {
-                animal.toManagedObject()
-            }
-            
-            await stopLoading()
-        } catch {
-            print("Error fetching animals...\(error)")
-        }
-    }
-    
-    @MainActor
-    func stopLoading() async {
-      self.isLoading = false
-    }
-    
 }
 
 struct AnimalsNearYouView_Previews: PreviewProvider {
+    
     static var previews: some View {
-        AnimalsNearYouView(isLoading: false)
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        Group {
+            AnimalsNearYouView(
+                viewModel: AnimalsNearYouViewModel(
+                    animalFetcher: AnimalsFetcherMock(),
+                    animalStore: AnimalStoreService(
+                        context: PersistenceController.preview.container.viewContext
+                    )
+                )
+            )
+            
+            AnimalsNearYouView(
+                viewModel: AnimalsNearYouViewModel(
+                    animalFetcher: AnimalsFetcherMock(),
+                    animalStore: AnimalStoreService(
+                        context: PersistenceController.preview.container.viewContext
+                    )
+                )
+            )
+            .preferredColorScheme(.dark)
+        }
+        .environment(
+            \.managedObjectContext,
+             PersistenceController.preview.container.viewContext
+        )
+        .environmentObject(LocationManager())
     }
+    
 }

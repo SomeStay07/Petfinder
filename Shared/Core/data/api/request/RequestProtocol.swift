@@ -8,16 +8,19 @@
 import Foundation
 
 protocol RequestProtocol {
+    
     var path: String { get }
     var requestType: RequestType { get }
     var headers: [String: String] { get }
     var params: [String: Any] { get }
     var urlParams: [String: String?] { get }
     var addAuthorizationToken: Bool { get }
+    
 }
 
 // MARK: - Default RequestProtocol
 extension RequestProtocol {
+    
     var host: String {
         APIConstants.host
     }

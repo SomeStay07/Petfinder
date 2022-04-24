@@ -6,6 +6,7 @@
 //
 
 enum AnimalsRequest: RequestProtocol {
+    
     case getAnimalsWith(page: Int, latitude: Double?, longitude: Double?)
     case getAnimalsBy(name: String, age: String?, type: String?)
     

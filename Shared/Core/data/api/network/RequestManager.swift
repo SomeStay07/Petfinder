@@ -6,11 +6,14 @@
 //
 
 protocol RequestManagerProtocol {
+    
     func perform<T: Decodable>(_ request: RequestProtocol) async throws -> T
+    
 }
 
 
 class RequestManager: RequestManagerProtocol {
+    
     let apiManager: APIManagerProtocol
     let parser: DataParserProtocol
     let accessTokenManager: AccessTokenManagerProtocol
@@ -42,4 +45,5 @@ class RequestManager: RequestManagerProtocol {
         let decoded: T = try parser.parse(data: data)
         return decoded
     }
+    
 }

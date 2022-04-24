@@ -10,6 +10,7 @@ import CoreData
 // MARK: - AnimalEntity Properties
 
 extension AnimalEntity {
+    
     var age: Age {
         get {
             guard let ageValue = ageValue, let age = Age(rawValue: ageValue) else {

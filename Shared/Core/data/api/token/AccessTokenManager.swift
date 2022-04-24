@@ -8,12 +8,15 @@
 import Foundation
 
 protocol AccessTokenManagerProtocol {
+    
     func isTokenValid() -> Bool
     func fetchToken() -> String
     func refreshWith(apiToken: APIToken) throws
+    
 }
 
 class AccessTokenManager {
+    
     private let userDefaults: UserDefaults
     private var accessToken: String?
     private var expiresAt = Date()
@@ -21,11 +24,13 @@ class AccessTokenManager {
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
     }
+    
 }
 
 // MARK: - AccessTokenManagerProtocol
 
 extension AccessTokenManager: AccessTokenManagerProtocol {
+    
     func isTokenValid() -> Bool {
         accessToken = getToken()
         expiresAt = getExpirationDate()
@@ -47,11 +52,13 @@ extension AccessTokenManager: AccessTokenManagerProtocol {
         self.expiresAt = expiresAt
         self.accessToken = token
     }
+    
 }
 
 // MARK: - Token Expiration
 
 private extension AccessTokenManager {
+    
     func save(token: APIToken) {
         userDefaults.set(token.expiresAt.timeIntervalSince1970, forKey: AppUserDefaultsKeys.expiresAt)
         userDefaults.set(token.bearerAccessToken, forKey: AppUserDefaultsKeys.bearerAccessToken)
@@ -64,4 +71,5 @@ private extension AccessTokenManager {
     func getToken() -> String? {
         userDefaults.string(forKey: AppUserDefaultsKeys.bearerAccessToken)
     }
+    
 }
