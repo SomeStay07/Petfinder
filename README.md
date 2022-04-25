@@ -6,7 +6,7 @@
 ![image](https://user-images.githubusercontent.com/47610132/164996255-6eba8ce6-6181-4fc1-a778-35932b60090e.png)
 
 Functions:
-  - Pagination, 
+  - Pagination
   - Search from the animals
   - Add pets to favorite
   - Detailed view
