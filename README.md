@@ -8,10 +8,9 @@
 Functions:
   - Pagination, 
   - Search from the animals
-  - Rounting and navigation
-  - Support deeplinks
   - Add pets to favorite
   - Detailed view
+  - Support deeplinks
   - Support accessibility
 
 **Stack:**
